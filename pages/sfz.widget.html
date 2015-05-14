@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="cache-control" content="max-age=0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>SFz</title>
+	
+	<!-- 
+		Link the stylesheet
+	 -->
+	
+	<!-- Intl Tel Input core CSS -->
+	<link rel="stylesheet" href="../assets/css/intlTelInput.css">
+		
+	<!-- SFz Widget CSS -->
+	<link rel="stylesheet" href="../css/widget2.css">
+	
+</head>
+
+<body>
+
+	<!-- 
+		Add the plugin script
+	 -->
+
+	<div id="mySFzWidget"></div>
+
+	<!-- jQuery Version 1.11.1 -->
+	<script src="../assets/js/jquery-1.11.1.js" ></script>
+	
+	<!-- Intl Tel Input -->
+	<script src="../assets/js/intlTelInput.min.js" ></script>	
+
+	<!-- SFz Widget -->	
+	<script src="../js/iffWidget2.js" ></script>
+
+	<!-- 
+		Initialize it on your element
+	 -->
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$('#mySFzWidget').iffWidget({});
+		});
+	</script>
+</body>
+</html>
