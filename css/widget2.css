@@ -391,6 +391,8 @@
 	color: #777;
 	font-size: 14px;
 	font-weight: normal;
+	font-family: "Noto Sans", sans-serif;
+	width: 184px;
 }
 
 .iw-list-inline > li > h3 {
@@ -398,6 +400,8 @@
 	color: #333;
 	font-size: 17px;
 	font-weight: normal;
+	font-family: "Noto Sans", sans-serif;
+	width: 184px;
 }
 
 .iw-form-contact-link-holder {
@@ -416,6 +420,11 @@
 .iw-form-contact-link:hover,
 .iw-form-link:focus,
 .iw-form-link:active {
+	text-decoration: none;
+	color: #fff;
+	padding: 2px 15px 4px 10px;
+	font-size: 14px;
+	border-radius: 10px;
 	background-color: rgba(0, 149, 202, .75); 
 }
 

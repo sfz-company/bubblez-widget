@@ -23,7 +23,7 @@ Add the plugin script and initialize it on your element
   <div id="mySFzWidget"></div>
 
 	<!-- jQuery Version 1.11.1 -->
-	<script src="../assets/js/jquery-1.11.1.js" ></script>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	
 	<!-- Intl Tel Input -->
 	<script src="../assets/js/intlTelInput.min.js" ></script>	
@@ -78,11 +78,11 @@ Example:
 ```javascript
   items: {
     'WhatsApp' : {
-      needContactForm: true,
-      image: 'w-whatsapp.png',
+			needContactForm: true,
+			image: 'w-whatsapp.png',
 			description: 'WhatsApp',
-      formDetails: {
-        image: 'winIcon-whatsapp.png',
+			formDetails: {
+			    image: 'winIcon-whatsapp.png',
 				label: 'whatsapp us at this number',
 				name: 'Contact Name',
 				number: '1234567890'
@@ -94,10 +94,13 @@ Example:
 			description: 'SMS',
 			formDetails: {
 				label: 'Enter your mobile number to text with us now',
-				url: 'https://login.servicefriendz.com/iff/sms/<company name>/'						
+				url: 'https://login.servicefriendz.com/iff/sms/<company name>/',
+				confirmation: "Thanks! We will be in touch shortly."
 			}
-		},
-		'Facebook' : {
+	},
+	'Facebook' : {
+	        needNewWindow: true,
+			windowSize: "height=500,width=750",
 			url: 'https://www.facebook.com/messages/',
 			image: 'w-facebook.png',
 			description: 'facebook'

@@ -29,7 +29,7 @@
 	<div id="mySFzWidget"></div>
 
 	<!-- jQuery Version 1.11.1 -->
-	<script src="../assets/js/jquery-1.11.1.js" ></script>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	
 	<!-- Intl Tel Input -->
 	<script src="../assets/js/intlTelInput.min.js" ></script>	
@@ -53,14 +53,18 @@
 				items: { 
 					'SMS': {
 						formDetails: {
-							url: 'https://login.servicefriendz.com/sms/ww/'
+							label: 'Enter your mobile number to get in touch with our team',
+							url: 'https://login.servicefriendz.com/sms/ww/',
+							confirmation: "Thanks! We will be in touch shortly."
 						}
 					},
 					
 					'WhatsApp': {
 						formDetails: {
 							name: 'WeWork',
-							number: '16466515297'
+							number: '16466515297',
+							label: 'Get in touch with our team on WhatsApp at this number:',
+							linkDesc: 'Add WeWork to your contacts'
 						}
 					},
 					

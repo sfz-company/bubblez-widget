@@ -34,9 +34,11 @@
 			},
 			items: { 
 				'Facebook' : {
+					needNewWindow: true,
 					url: 'https://www.facebook.com/messages/whateverphones',
 					image: 'w-facebook.png',
-					description: 'facebook'
+					description: 'facebook',
+					windowSize: "height=500,width=750"
 				}, 
 				'WhatsApp' : {
 					needContactForm: true,
@@ -57,7 +59,8 @@
 					description: 'SMS',
 					formDetails: {
 						label: 'Enter your mobile number to text with us now',
-						url: 'https://login.servicefriendz.com/iff/sms/sfz/'						
+						url: 'https://login.servicefriendz.com/sms/sfz/',
+						confirmation: 'Thank you. you will receive a message in a sec :)'
 					}
 				},
 				'LiveChat' : {
@@ -203,6 +206,7 @@
 					countryCode.intlTelInput('setNumber', '+1');
 				}
 					
+				iwFormHolder.find('.iw-form-greeting').text(formDetails.comfirmation);
 				iwFormHolder.find('#inputLabel').text(formDetails.label);
 				iwFormHolder.find('#countryCode').val(dialCode);
 				iwFormHolder.find('#phoneNumber').val('');
@@ -366,13 +370,20 @@
 					'data-index': index,
 					'data-form': 'contact'
 				});
+			} else if (options.items[key].needNewWindow === true) {
+				link = $(document.createElement('a'));
+				link.attr({
+					href: options.items[key].url ? 'javascript:window.open("'+options.items[key].url+'", "_blank", "' + options.items[key].windowSize + '");' : '#',
+					'data-index': index
+				});
+
 			} else {
 				link = $(document.createElement('a'));
 				link.attr({
 					href: options.items[key].url ? options.items[key].url : '#',
+					target: '_blank',
 					'data-index': index
 				});
-
 			}
 			
 			link.css({
@@ -508,8 +519,7 @@
 			.append($('<img src="../images/Aicon-send.png"></img>'));
 		var iwFormInline = $(document.createElement('div')).addClass('iw-form-inline')
 			.append(countryCode).append(phoneNumber).append(submitBtn);
-		var iwFormGreeting = $(document.createElement('div')).addClass('iw-form-greeting')
-			.text('Thank you. you will receive a message in a sec :)');
+		var iwFormGreeting = $(document.createElement('div')).addClass('iw-form-greeting');
 		var iwFormInput = $(document.createElement('div')).addClass('iw-form-input')
 			.append($('<label>', {'id': 'inputLabel', 'for' : 'phoneNumber'}))
 			.append(iwFormInline)
