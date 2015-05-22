@@ -95,7 +95,8 @@ Example:
 			formDetails: {
 				label: 'Enter your mobile number to text with us now',
 				url: 'https://login.servicefriendz.com/iff/sms/<company name>/',
-				confirmation: "Thanks! We will be in touch shortly."
+				confirmation: 'Thanks! We will be in touch shortly.',
+				error: 'Unexpected error occurred. Please try to reload the page.'
 			}
 	},
 	'Facebook' : {

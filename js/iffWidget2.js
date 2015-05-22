@@ -60,7 +60,8 @@
 					formDetails: {
 						label: 'Enter your mobile number to text with us now',
 						url: 'https://login.servicefriendz.com/sms/sfz/',
-						confirmation: 'Thank you. you will receive a message in a sec :)'
+						confirmation: 'Thank you. you will receive a message in a sec :)',
+						error: 'Unexpected error occurred. Please try to reload the page.'
 					}
 				},
 				'LiveChat' : {
@@ -206,7 +207,7 @@
 					countryCode.intlTelInput('setNumber', '+1');
 				}
 					
-				iwFormHolder.find('.iw-form-greeting').text(formDetails.comfirmation);
+				iwFormHolder.find('.iw-form-greeting').text(formDetails.confirmation);
 				iwFormHolder.find('#inputLabel').text(formDetails.label);
 				iwFormHolder.find('#countryCode').val(dialCode);
 				iwFormHolder.find('#phoneNumber').val('');
@@ -233,7 +234,8 @@
 					$.ajax({
 						  url: formDetails.url + input
 					}).fail(function(jqXHR, textStatus) {
-					    alert( "Request failed: " + jqXHR.statusText );
+						iwFormHolder.find('.iw-form-greeting').text(formDetails.error);
+					    console.log( "Request failed: " + jqXHR.statusText );
 					})
 	
 					if (mobileCheck() === true) {
