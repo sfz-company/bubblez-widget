@@ -55,19 +55,21 @@
 						needInputForm: true,
 						needContactForm: false,
 						formDetails: {
+							location: 'UK',
 							label: 'Enter your mobile number to get in touch with our team',
-							url: 'https://login.servicefriendz.com/sms/ww/',
+							url: 'https://login.servicefriendz.com/sms/wwuk/',
 							confirmation: 'Thanks! We will be in touch shortly.'
 						}
 					},
 					
 					'WhatsApp': {
-						needInputForm: true,
-						needContactForm: false,
+						needInputForm: false,
+						needContactForm: true,
 						formDetails: {
-							label: 'Enter your mobile number to get in touch with our team',
-							url: 'https://login.servicefriendz.com/sms/ww/',
-							confirmation: 'Thanks! You will receive a SMS shortly with our whatsapp number.'
+							name: 'WeWork',
+							number: '16466515297',
+							label: 'Get in touch with our team on WhatsApp at this number:',
+							linkDesc: 'Add WeWork to your contacts'
 						}
 					},
 										

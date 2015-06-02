@@ -23,7 +23,7 @@
 	
 	Iff.Defaults = {
 			required: ['ALL'],
-			custom: {
+			postion: {
 				bottom: '0',
 				left: '0'
 			},
@@ -58,6 +58,7 @@
 					image: 'w-sms.png',
 					description: 'SMS',
 					formDetails: {
+						location: null,
 						label: 'Enter your mobile number to text with us now',
 						url: 'https://login.servicefriendz.com/sms/sfz/',
 						confirmation: 'Thank you. you will receive a message in a sec :)',
@@ -232,7 +233,7 @@
 					
 					console.log(formDetails.url + input);
 					$.ajax({
-						  url: formDetails.url + input
+						  url: formDetails.url + (formDetails.location ? formDetails.location + '/' : '') + input
 					}).fail(function(jqXHR, textStatus) {
 						iwFormHolder.find('.iw-form-greeting').text(formDetails.error);
 					    console.log( "Request failed: " + jqXHR.statusText );
@@ -434,8 +435,8 @@
 			iwComponent.addClass(this.options.theme);
 		}
 		
-		if (this.options.custom) {
-			iwComponent.css(this.options.custom);
+		if (this.options.position) {
+			iwComponent.css(this.options.position);
 		}
 		
 		var iwCnOverlay = $(document.createElement('div')).addClass('iw-cn-overlay');

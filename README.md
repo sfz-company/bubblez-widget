@@ -38,17 +38,17 @@ Add the plugin script and initialize it on your element
 ```
 
 Options:
-  custom, type object default: bottom is 0px, left is 0px
+  position, type object default: bottom is 0px, left is 0px.  User can position the widget by setting bottom and left positions.
 
 Example:
 ```javascript
-  custom : {
+  position : {
     bottom: '20px',
     left: '30px'
   }
 ```
 
-theme, type: string, default: sfz, the 
+theme, type: string, default: sfz. User can provide its own css with the prefix as theme value.
 
 Example:
 ```javascript
@@ -78,6 +78,7 @@ Example:
 ```javascript
   items: {
     'WhatsApp' : {
+			needInputForm: false,
 			needContactForm: true,
 			image: 'w-whatsapp.png',
 			description: 'WhatsApp',
@@ -90,9 +91,11 @@ Example:
     },
     'SMS' : {
 			needInputForm: true,
+			needContactForm: false,
 			image: 'w-sms.png',
 			description: 'SMS',
 			formDetails: {
+				location: '<location>',
 				label: 'Enter your mobile number to text with us now',
 				url: 'https://login.servicefriendz.com/iff/sms/<company name>/',
 				confirmation: 'Thanks! We will be in touch shortly.',
@@ -108,6 +111,19 @@ Example:
 		}, 
 ```
 
+when needContactForm option is selected (i.e. needContactForm is set to true) then a contact form will appear which allow the user to add the phone number to his/her contact list when user click on an item.  the following are the parameters for formDetails:
+	image  - the image that will display in the contact form, dimension: 48px x 48px.
+	label  - the greeting message.
+	name   - when a client click the contact button from iPhone, then a vCard will base on this name to generate.
+	number - the contact number.
+
+when needInputForm option is selected (i.e. needInputForm is set to true) then an input form will appear which allow the user to enter his/her phone number to receive an SMS message which user click on an item.  The following are the parameters for formDetails:
+	location 	 - location details that will pass to server.
+	label    	 - the greeting message.
+	url      	 - URL provide by Servicefriendz.
+	confirmation - message for confirmation when the number successfully send to Servicefriendz's server.
+	error        - message for error when the request cannot retrieve by Servicefriendz's server.
+	
 Country support:
 
 Example: 
