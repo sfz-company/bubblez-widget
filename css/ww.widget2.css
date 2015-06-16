@@ -6,6 +6,13 @@
 	background: radial-gradient(transparent 20%, rgba(37, 38, 40, 1) 20%);
 }
 
+.ww .iw-cn-wrapper.iw-only-one {
+	background-color: transparent;
+	background: -webkit-radial-gradient(transparent 20%, transparent 20%);
+	background: -moz-radial-gradient(transparent 20%, transparent 20%);
+	background: radial-gradient(transparent 20%, transparent 20%);
+}
+
 .ww .iw-cn-bg-cover {
 	border: 0px solid #fff;
 	-webkit-box-shadow: none;

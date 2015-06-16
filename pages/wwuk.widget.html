@@ -47,34 +47,20 @@
 				theme: 'ww',
 				helpOnGo: {
 					image: null,
-					label: 'Ask me anything',
+					label: 'SMS US!',
 				},
-				required: ['SMS', 'WhatsApp', 'Facebook'],
+				required: ['SMS'],
 				items: { 
-					'SMS': {
-						needInputForm: true,
-						needContactForm: false,
-						formDetails: {
-							location: 'UK',
-							label: 'Enter your mobile number to get in touch with our team',
-							url: 'https://login.servicefriendz.com/sms/wwuk/',
-							confirmation: 'Thanks! We will be in touch shortly.'
-						}
-					},
 					
-					'WhatsApp': {
+					'SMS': {
 						needInputForm: false,
 						needContactForm: true,
 						formDetails: {
 							name: 'WeWork',
 							number: '16466515297',
-							label: 'Get in touch with our team on WhatsApp at this number:',
+							label: 'Get in touch with our team on SMS at this number:',
 							linkDesc: 'Add WeWork to your contacts'
 						}
-					},
-										
-					'Facebook' : {
-						url: 'https://www.facebook.com/messages/WeWork',
 					}
 				}
 			});

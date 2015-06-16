@@ -68,7 +68,7 @@
 	background: -webkit-radial-gradient(transparent 20%, rgba(255, 255, 255, .5) 20%);
 	background: -moz-radial-gradient(transparent 20%, rgba(255, 255, 255, .5) 20%);
 	background: radial-gradient(transparent 20%, rgba(255, 255, 255, .5) 20%);
-
+	
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;	
@@ -147,6 +147,13 @@
 	-ms-transform: scale(1);
 	-o-transform: scale(1);
 	transform: scale(1);	
+}
+
+.iw-cn-wrapper.iw-only-one {
+	background-color: transparent;
+	background: -webkit-radial-gradient(transparent 20%, transparent 20%);
+	background: -moz-radial-gradient(transparent 20%, transparent 20%);
+	background: radial-gradient(transparent 20%, transparent 20%);
 }
 
 .iw-cn-wrapper ul {

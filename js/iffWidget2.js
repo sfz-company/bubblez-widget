@@ -58,6 +58,7 @@
 					image: 'w-sms.png',
 					description: 'SMS',
 					formDetails: {
+						image: 'w-sms.png',
 						location: null,
 						label: 'Enter your mobile number to text with us now',
 						url: 'https://login.servicefriendz.com/sms/sfz/',
@@ -78,278 +79,496 @@
 		
 	
 	/**
-	 * Initializes the carousel.
+	 * Initializes the iff widget.
 	 * @protected
 	 */
 	Iff.prototype.initialize = function() {
+		var iwComponent = this.$element;
+		iwComponent.addClass('iw-component');
 		
-		function formatPhone(phone) {
-	        if (!phone) { return ''; }
-
-	        var value = phone.toString().trim().replace(/^\+/, '');
-
-	        if (value.match(/[^0-9]/)) {
-	            return phone;
-	        }
-
-	        var country, city, number;
-
-	        switch (value.length) {
-	            case 10: // +1PPP####### -> C (PPP) ###-####
-	                country = 1;
-	                city = value.slice(0, 3);
-	                number = value.slice(3);
-	                break;
-
-	            case 11: // +CPPP####### -> CCC (PP) ###-####
-	                country = value[0];
-	                city = value.slice(1, 4);
-	                number = value.slice(4);
-	                break;
-
-	            case 12: // +CCCPP####### -> CCC (PP) ###-####
-	                country = value.slice(0, 3);
-	                city = value.slice(3, 5);
-	                number = value.slice(5);
-	                break;
-
-	            default:
-	                return phone;
-	        }
-
-	        if (country === 1) {
-	            country = '';
-	        }
-
-	        number = number.slice(0, 3) + '.' + number.slice(3);
-	        return ('+' + country + '.' + city + '.' + number).trim();
-	    }
-		
-		function createVCard() {
-		    var start = "BEGIN:VCARD\nVERSION:4.0";
-		    var end = "END:VCARD";
-		    var data = "";
-
-		    var init = function() {
-		        data = "";
-		    };
-
-		    var name = function (surname, lastname) {
-		        data += "N:" + lastname + ';' + surname + ';;;';
-		        data += "\n";
-		    };
-
-		    var work = function (work) {
-		        data += "TEL;TYPE=work,voice;VALUE=uri:tel:" + formatPhone(work).replace(/\./g, '-');
-		        data += "\n";
-		    };
-
-		    var email = function (email) {
-		        data += "EMAIL:" + email;
-		        data += "\n";
-		    };
-
-		    var get = function () {
-		        return start + '\n' + data + end;
-		    };
-
-		    return {
-		        init:init,
-		        name:name,
-		        work:work,
-		        email:email,
-		        get:get
-		    }
+		if (this.options.theme) {
+			iwComponent.addClass(this.options.theme);
 		}
 		
-		function mobileCheck() {
-			return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+		if (this.options.position) {
+			iwComponent.css(this.options.position);
 		}
 		
-		function isIPhone() {
-			return (/iPhone|iPad|iPod/i.test(navigator.userAgent));
-		}
+		var iwCnOverlay = $(document.createElement('div')).addClass('iw-cn-overlay');
 		
-		function validateInput() {
-			var phoneNumber = iwFormHolder.find('#phoneNumber');
-			if (phoneNumber.val().length === 0) {
-				return false;
-			}
-			return true;
+		var iwCnButton = $(document.createElement('button')).addClass('iw-cn-button');
+		if (this.options.helpOnGo.image) {
+			iwCnButton.append($('<img src="../images/' + this.options.helpOnGo.image + '"></img>'));
+		} else {
+			iwCnButton.append($('<span>' + this.options.helpOnGo.label + '</span>'));
 		}
+		iwComponent.append(iwCnButton);
 		
-		function hideInputForm(component) {
-			var iwFormHolder = component.find('.iw-form-holder');
-			iwFormHolder.removeClass('iw-opened-nav');
-			iwFormHolder.css({
-				'bottom': '0',
-				'left': '0'
-			});
-			iwFormHolder.attr({
-				'data-index': '-1'
-			});
-		}
-		
-		function showInputForm(component, index, size, formType, formDetails) {
-			var iwFormHolder = component.find('.iw-form-holder');
-			iwFormHolder.find('.iw-form').off('submit');
-			iwFormHolder.addClass('iw-opened-nav');
-			
-			if (formType === 'input') {
-				iwFormHolder.find('.iw-form').css({'overflow': 'visible'});
-				iwFormHolder.find('.iw-form-input').css({'display': 'block'});
-				iwFormHolder.find('.iw-form-contact').css({'display': 'none'});
-				
-				var dialCode = '';
-				if (countryCode.intlTelInput('getSelectedCountryData').dialCode !== undefined) {
-					dialCode = '+' + countryCode.intlTelInput('getSelectedCountryData').dialCode;
-				} else {
-					dialCode = '+1';
-					countryCode.intlTelInput('setNumber', '+1');
+		var iwCnWrapper = $(document.createElement('div')).addClass('iw-cn-wrapper');
+		iwCnWrapper.append($(document.createElement('div')).addClass('iw-cn-sm-cover'));
+		iwCnWrapper.append($(document.createElement('div')).addClass('iw-cn-bg-cover'));
+
+		var itemSize = this.options.required.indexOf('ALL') !== -1 ? Object.keys(this.options.items).length : this.options.required.length;
+
+		var skew = 135 / itemSize;
+		var aAngle = 135/(2 * itemSize) - 90;
+		var iwCnUl = $(document.createElement('ul'));
+
+		for (var j = 0; j < this.options.required.length; j ++) {
+			if (this.options.required[j] === 'ALL') {
+				var i = 0;
+				for (var key in this.options.items) {
+					iwCnUl.append(this.createItem(iwComponent, skew, aAngle, this.options, key, itemSize, i));
+					i ++;
 				}
-					
-				iwFormHolder.find('.iw-form-greeting').text(formDetails.confirmation);
-				iwFormHolder.find('#inputLabel').text(formDetails.label);
-				iwFormHolder.find('#countryCode').val(dialCode);
-				iwFormHolder.find('#phoneNumber').val('');
-				iwFormHolder.find('#phoneNumber').focus();
-				iwFormHolder.find('.iw-form').submit(function(evt) {
-					if (!validateInput()) {
-						if (mobileCheck() === true) {
-							component.css({'display': 'none'});
-						}
-						window.setTimeout(function () {
-							if (mobileCheck() === true) {
-								component.css({'display': 'block'});
-							}
-							iwFormHolder.find('#phoneNumber').focus();
-						}, 50);
-						return false;
-					}
-					
-					var dialCode = countryCode.intlTelInput("getSelectedCountryData").dialCode
-					var phoneNumber = iwFormHolder.find('#phoneNumber');				
-					var input = dialCode.replace('+', '') + phoneNumber.val();
-					
-					console.log(formDetails.url + input);
-					$.ajax({
-						  url: formDetails.url + (formDetails.location ? formDetails.location + '/' : '') + input
-					}).fail(function(jqXHR, textStatus) {
-						iwFormHolder.find('.iw-form-greeting').text(formDetails.error);
-					    console.log( "Request failed: " + jqXHR.statusText );
-					})
-	
-					if (mobileCheck() === true) {
-						component.find('.iw-cn-wrapper').removeClass('iw-opened-nav');
-						iwFormHolder.css({'left': iwFormHolder.css('left').replace('px', '') - 20 + 'px'});
-					}
-					iwFormHolder.find('.iw-form-greeting').css({'display': 'block'});
-					iwFormHolder.find('.iw-form-details').css({'display': 'none'});
-					
-					window.setTimeout(function () {
-						iwFormHolder.find('.iw-form-greeting').css({'display': 'none'});
-						iwFormHolder.find('.iw-form-details').css({'display': 'block'});
-						component.find('.iw-cn-button').trigger('click');
-						
-					}, 3000);
-					return true;
-				});
-			} else if (formType === 'contact') {
-				iwFormHolder.find('.iw-form').css({'overflow': ''});
-				iwFormHolder.find('.iw-form-input').css({'display': 'none'});
-				iwFormHolder.find('.iw-form-contact').css({'display': 'block'});
-				
-				iwFormHolder.find('#contactLabel').text(formDetails.label);
-				iwFormHolder.find('#contactNumber').text(formDetails.number ? formatPhone(formDetails.number) : '');
-				iwFormHolder.find('#contactIcon').attr({'src': '../images/' + formDetails.image});
-				iwFormHolder.find('#linkDescription').text(formDetails.linkDesc);
-				
-				if (mobileCheck() && isIPhone()) {
-					var vCard = createVCard(); 
-					vCard.init();
-					vCard.name(formDetails.name, '');
-					vCard.work(formDetails.number);
-					
-					var data = vCard.get();
-					iwFormHolder.find('.iw-form-contact-link').attr({
-						'href': 'data:text/vcard;charset=utf-8,' + encodeURIComponent(data), 
-						'download': (formDetails.name.replace(/ /g, '_') + '.vcf')});										
-				} else {
-					iwFormHolder.find('.iw-form-contact-link').attr({'href': formDetails.number ? ('tel:+' + formDetails.number) : '#'});										
-				}
-			}
-			
-			var bottom, left;
-			if (mobileCheck() === true) {
-				var innerHeight = window.innerHeight;
-				var innerWidth = window.innerWidth;
-				if (innerHeight <= 380) {
-					bottom = innerHeight / 1.25 + 'px';					
-				} else {
-					bottom = innerHeight / 1.75 + 'px';
-				}
-				left = (innerWidth / 2) - 72;	
-				left = left < 0 ? 0 : (left  + 'px');
+				break;
+
 			} else {
-				if (typeof index === 'string') {
-					index = parseInt(index);
+				iwCnUl.append(this.createItem(iwComponent, skew, aAngle, this.options, this.options.required[j], itemSize, j));
+				
+			}
+		}
+		iwCnWrapper.append(iwCnUl);	
+		iwComponent.append(iwCnWrapper);
+		
+		var countryCode = $(document.createElement('input')).addClass('iw-form-control')
+			.attr({
+				'type': 'tel',
+				'id': 'countryCode',
+				'name': 'countryCode',
+				'tabindex' : '1'
+			}).keypress(function(evt) {
+				Iff.prototype.isPatternMatched.call(this, evt, /[0-9\r\t]/);
+			}).focus(function(evt) {
+				if (Iff.prototype.isMobile.call(this) === true) {
+					Iff.prototype.adjustComponentHeight.call(this, iwComponent, false);
+				}
+			}).blur(function(evt) {
+				if (Iff.prototype.isMobile.call(this) === true) {
+					Iff.prototype.adjustComponentHeight.call(this, iwComponent, true);
+				}
+			});
+		var phoneNumber = $(document.createElement('input')).addClass('iw-form-control')
+			.prop('required',true).attr({
+				'type': 'tel',
+				'id': 'phoneNumber',
+				'name': 'phoneNumber',
+				'tabindex' : '2',
+				'autocomplete': 'off'
+			}).keypress(function(evt) {
+				Iff.prototype.isPatternMatched.call(this, evt, /[0-9\r\t]/);				
+			}).keydown(function(evt) {
+				if (evt.which === 9) {
+					iwComponent.find('.iw-form').submit();
+				}
+			}).focus(function(evt) {
+				if (Iff.prototype.isMobile.call(this) === true) {
+					Iff.prototype.adjustComponentHeight.call(this, iwComponent, false);
+				}
+			}).blur(function(evt) {
+				if (Iff.prototype.isMobile.call(this) === true) {
+					Iff.prototype.adjustComponentHeight.call(this, iwComponent, true);
+				}
+			});
+		var submitBtn = $(document.createElement('button')).addClass('iw-btn')
+			.attr({
+				'id': 'submitButton',
+				'type': 'submit',
+				'tabindex' : '3'
+			})
+			.append($('<img src="../images/Aicon-send.png"></img>'));
+		var iwFormInline = $(document.createElement('div')).addClass('iw-form-inline')
+			.append(countryCode).append(phoneNumber).append(submitBtn);
+		var iwFormGreeting = $(document.createElement('div')).addClass('iw-form-greeting');
+		var iwFormInput = $(document.createElement('div')).addClass('iw-form-input')
+			.append($('<label>', {'id': 'inputLabel', 'for' : 'phoneNumber'}))
+			.append(iwFormInline);
+		
+		var iwFormContactInline = $(document.createElement('div')).addClass('iw-list-inline-holder')
+			.append($('<ul>', {'class': 'iw-list-inline'})
+					.append($('<li>')
+						.append($('<img>', {'id': 'contactIcon'})))
+					.append($('<li>')
+						.append($('<h5>', {'id': 'contactLabel'}))
+						.append($('<h3>', {'id': 'contactNumber'}))));
+		var iwFormContactLink = $(document.createElement('div')).addClass('iw-form-contact-link-holder')
+			.append($('<a>', {'class': 'iw-form-contact-link', 'href': '#'})
+					.append($('<img>', {'src': '../images/addCont-icon.png'}))
+					.append($('<span>', {'id': 'linkDescription'})));
+		var iwFormContact = $(document.createElement('div')).addClass('iw-form-contact')
+			.append(iwFormContactInline)
+			.append(iwFormContactLink);
+		var iwFormDetails = $(document.createElement('div')).addClass('iw-form-details')
+			.append(iwFormInput)
+			.append(iwFormContact);
+		var iwFormGroup = $(document.createElement('div')).addClass('iw-form-group');
+			if (iwComponent.find('ul>li').length > 0) {
+				iwFormGroup.append($('<div>', {html: '\&times;', 'class': 'iw-form-close'})
+					.click(function(evt) {
+						Iff.prototype.hideInputForm.call(this, iwComponent);
+					}));
+			}
+			iwFormGroup.append(iwFormGreeting).append(iwFormDetails);
+		var iwForm = $(document.createElement('form')).addClass('iw-form')
+			.attr({
+				'action': 'javascript:void(0);'
+			})
+			.append(iwFormGroup);
+		var iwFormHolder = $(document.createElement('div')).addClass('iw-form-holder')
+			.append(iwForm);
+
+		this.$body.append(iwCnOverlay);
+		iwComponent.append(iwFormHolder);
+		this.$intlTelInput = countryCode.intlTelInput({
+			autoHideDialCode: false,
+			nationalMode: false,
+			defaultCountry: 'auto'
+		});
+	}
+	
+	/**
+	 * is mobile.
+	 * @protected
+	 */
+	Iff.prototype.isMobile = function() {
+		return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+	}
+	
+	/**
+	 * is iphone.
+	 * @protected
+	 */
+	Iff.prototype.isIPhone = function() {
+		return (/iPhone|iPad|iPod/i.test(navigator.userAgent));
+	}
+	
+	/**
+	 * is pattern matched.
+	 * @protected
+	 */
+	Iff.prototype.isPatternMatched = function(evt, regex) {
+		var theEvent = evt || window.event;
+		var key = theEvent.keyCode || theEvent.which;
+		key = String.fromCharCode(key);
+		if (!regex.test(key)) {
+			theEvent.returnValue = false;
+			if (theEvent.preventDefault) {
+				theEvent.preventDefault();
+			}
+		}
+	};
+	
+	/**
+	 * format phone number.
+	 * @protected
+	 */
+	Iff.prototype.formatPhone = function(phone) {
+        if (!phone) { return ''; }
+
+        var value = phone.toString().trim().replace(/^\+/, '');
+
+        if (value.match(/[^0-9]/)) {
+            return phone;
+        }
+
+        var country, city, number;
+
+        switch (value.length) {
+            case 10: // +1PPP####### -> C (PPP) ###-####
+                country = 1;
+                city = value.slice(0, 3);
+                number = value.slice(3);
+                break;
+
+            case 11: // +CPPP####### -> CCC (PP) ###-####
+                country = value[0];
+                city = value.slice(1, 4);
+                number = value.slice(4);
+                break;
+
+            case 12: // +CCCPP####### -> CCC (PP) ###-####
+                country = value.slice(0, 3);
+                city = value.slice(3, 5);
+                number = value.slice(5);
+                break;
+
+            default:
+                return phone;
+        }
+
+        if (country === 1) {
+            country = '';
+        }
+
+        number = number.slice(0, 3) + '.' + number.slice(3);
+        return ('+' + country + '.' + city + '.' + number).trim();
+    }
+	
+	/**
+	 * create vCard.
+	 * @protected
+	 */
+	Iff.prototype.createVCard = function() {
+	    var start = "BEGIN:VCARD\nVERSION:4.0";
+	    var end = "END:VCARD";
+	    var data = "";
+
+	    var init = function() {
+	        data = "";
+	    };
+
+	    var name = function (surname, lastname) {
+	        data += "N:" + lastname + ';' + surname + ';;;';
+	        data += "\n";
+	    };
+
+	    var work = function (work) {
+	        data += "TEL;TYPE=work,voice;VALUE=uri:tel:" + Iff.prototype.formatPhone.call(this, work).replace(/\./g, '-');
+	        data += "\n";
+	    };
+
+	    var email = function (email) {
+	        data += "EMAIL:" + email;
+	        data += "\n";
+	    };
+
+	    var get = function () {
+	        return start + '\n' + data + end;
+	    };
+
+	    return {
+	        init:init,
+	        name:name,
+	        work:work,
+	        email:email,
+	        get:get
+	    }
+	}
+	
+	/**
+	 * validate input form.
+	 * @protected
+	 */
+	Iff.prototype.validateInput = function(formHolder) {
+		var phoneNumber = formHolder.find('#phoneNumber');
+		if (phoneNumber.val().length === 0) {
+			return false;
+		}
+		return true;
+	}
+		
+	/**
+	 * hide input form.
+	 * @protected
+	 */
+	Iff.prototype.hideInputForm = function(component) {
+		var iwFormHolder = component.find('.iw-form-holder');
+		iwFormHolder.removeClass('iw-opened-nav');
+		iwFormHolder.css({
+			'bottom': '0',
+			'left': '0'
+		});
+		iwFormHolder.attr({
+			'data-index': '-1'
+		});
+	}
+		
+	/**
+	 * show input form.
+	 * @protected
+	 */
+	Iff.prototype.showInputForm = function(component, index, size, formType, formDetails, isOnlyOne) {
+		var iwFormHolder = component.find('.iw-form-holder');
+		iwFormHolder.find('.iw-form').off('submit');
+		iwFormHolder.addClass('iw-opened-nav');
+		
+		if (formType === 'input') {
+			iwFormHolder.find('.iw-form').css({'overflow': 'visible'});
+			iwFormHolder.find('.iw-form-input').css({'display': 'block'});
+			iwFormHolder.find('.iw-form-contact').css({'display': 'none'});
+			
+			var dialCode = '';
+			var countryCode = iwFormHolder.find('#countryCode');
+			if (countryCode.intlTelInput('getSelectedCountryData').dialCode !== undefined) {
+				dialCode = '+' + countryCode.intlTelInput('getSelectedCountryData').dialCode;
+			} else {
+				dialCode = '+1';
+				countryCode.intlTelInput('setNumber', '+1');
+			}
+				
+			iwFormHolder.find('.iw-form-greeting').text(formDetails.confirmation);
+			iwFormHolder.find('#inputLabel').text(formDetails.label);
+			iwFormHolder.find('#countryCode').val(dialCode);
+			iwFormHolder.find('#phoneNumber').val('');
+			iwFormHolder.find('#phoneNumber').focus();
+			iwFormHolder.find('.iw-form').submit(function(evt) {
+				if (!Iff.prototype.validateInput.call(this, iwFormHolder)) {
+					if (Iff.prototype.isMobile.call(this) === true) {
+						component.css({'display': 'none'});
+					}
+					window.setTimeout(function () {
+						if (Iff.prototype.isMobile.call(this) === true) {
+							component.css({'display': 'block'});
+						}
+						iwFormHolder.find('#phoneNumber').focus();
+					}, 50);
+					return false;
 				}
 				
-				if (typeof size === 'string') {
-					size = parseInt(size);
-				}
+				var dialCode = countryCode.intlTelInput("getSelectedCountryData").dialCode
+				var phoneNumber = iwFormHolder.find('#phoneNumber');				
+				var input = dialCode.replace('+', '') + phoneNumber.val();
 				
-				var baseDegrees = (0.65 * Math.PI / size) * index;				
-				bottom = Math.cos(baseDegrees)*225.0778+ 56+'px';
-				left = Math.sin(baseDegrees)*225.0778 + 56+'px';
+				console.log(formDetails.url + input);
+				$.ajax({
+					  url: formDetails.url + (formDetails.location ? formDetails.location + '/' : '') + input
+				}).fail(function(jqXHR, textStatus) {
+					iwFormHolder.find('.iw-form-greeting').text(formDetails.error);
+				    console.log( "Request failed: " + jqXHR.statusText );
+				})
+
+				if (Iff.prototype.isMobile.call(this) === true) {
+					component.find('.iw-cn-wrapper').removeClass('iw-opened-nav');
+					iwFormHolder.css({'left': iwFormHolder.css('left').replace('px', '') - 20 + 'px'});
+				}
+				iwFormHolder.find('.iw-form-greeting').css({'display': 'block'});
+				iwFormHolder.find('.iw-form-details').css({'display': 'none'});
+				
+				window.setTimeout(function () {
+					iwFormHolder.find('.iw-form-greeting').css({'display': 'none'});
+					iwFormHolder.find('.iw-form-details').css({'display': 'block'});
+					component.find('.iw-cn-button').trigger('click');
+					
+				}, 3000);
+				return true;
+			});
+			
+		} else if (formType === 'contact') {
+			iwFormHolder.find('.iw-form').css({'overflow': ''});
+			iwFormHolder.find('.iw-form-input').css({'display': 'none'});
+			iwFormHolder.find('.iw-form-contact').css({'display': 'block'});
+			
+			iwFormHolder.find('#contactLabel').text(formDetails.label);
+			iwFormHolder.find('#contactNumber').text(formDetails.number ? Iff.prototype.formatPhone.call(this, formDetails.number) : '');
+			iwFormHolder.find('#contactIcon').attr({'src': '../images/' + formDetails.image});
+			iwFormHolder.find('#linkDescription').text(formDetails.linkDesc);
+			
+			if (Iff.prototype.isMobile.call(this) && Iff.prototype.isIPhone.call(this)) {
+				var vCard = Iff.prototype.createVCard.call(this); 
+				vCard.init();
+				vCard.name(formDetails.name, '');
+				vCard.work(formDetails.number);
+				
+				var data = vCard.get();
+				iwFormHolder.find('.iw-form-contact-link').attr({
+					'href': 'data:text/vcard;charset=utf-8,' + encodeURIComponent(data), 
+					'download': (formDetails.name.replace(/ /g, '_') + '.vcf')});										
+			} else {
+				iwFormHolder.find('.iw-form-contact-link').attr({'href': formDetails.number ? ('tel:+' + formDetails.number) : '#'});										
+			}
+		}
+		
+		var bottom, left;
+		if (Iff.prototype.isMobile.call(this) === true) {
+			var innerHeight = window.innerHeight;
+			var innerWidth = window.innerWidth;
+			if (innerHeight <= 380) {
+				bottom = innerHeight / 1.25 + 'px';					
+			} else {
+				bottom = innerHeight / 1.75 + 'px';
+			}
+			left = (innerWidth / 2) - 72;	
+			left = left < 0 ? 0 : (left  + 'px');
+		} else if (isOnlyOne) {
+			bottom = 148 + 'px';
+			left = 36 + 'px';
+		} else {
+			if (typeof index === 'string') {
+				index = parseInt(index);
 			}
 			
-			iwFormHolder.css({
-					'bottom': bottom,
-					'left': left
-				});
-			iwFormHolder.attr({
+			if (typeof size === 'string') {
+				size = parseInt(size);
+			}
+			
+			var baseDegrees = (0.65 * Math.PI / size) * index;				
+			bottom = Math.cos(baseDegrees)*225.0778 + 56 +'px';
+			left = Math.sin(baseDegrees)*225.0778 + 56 +'px';
+		}
+		
+		iwFormHolder.css({
+				'bottom': bottom,
+				'left': left
+			});
+		iwFormHolder.attr({
 				'data-index': index
 			});
-		};
+	};
+	
+	/**
+	 * adjust component height.
+	 * @protected
+	 */
+	Iff.prototype.adjustComponentHeight = function(component, isIncrease) {
+		var bottom = component.css('bottom');
 		
-		function isMatchPattern(evt, regex) {
-			var theEvent = evt || window.event;
-			var key = theEvent.keyCode || theEvent.which;
-			key = String.fromCharCode(key);
-			if (!regex.test(key)) {
-				theEvent.returnValue = false;
-				if (theEvent.preventDefault) {
-					theEvent.preventDefault();
-				}
-			}
-		};
+		var increaseTo = 170;
+		if (!isIncrease) {
+			increaseTo = increaseTo * -1;
+		}		
 		
-		function adjustComponentHeight(component, isIncrease) {
-			var bottom = component.css('bottom');
-			
-			var increaseTo = 170;
-			if (!isIncrease) {
-				increaseTo = increaseTo * -1;
-			}		
-			
-			component.css({
-				bottom: parseFloat(bottom.replace('px', '')) + increaseTo + 'px' 
+		component.css({
+			bottom: parseFloat(bottom.replace('px', '')) + increaseTo + 'px' 
+		});
+	}
+	
+	/**
+	 * create item.
+	 * @protected
+	 */
+	Iff.prototype.createItem = function(component, skew, aAngle, options, key, itemSize, index) {		
+		var iAngle = 0, calcSkew = 0, calcAAngle = 0;
+		
+		if (itemSize === 1) {
+			component.find('.iw-cn-button').on('click', function(event) {
+				event.preventDefault();
+				if (!$(this).hasClass('iw-opened-nav')) {
+					var link = null,
+						dataForm = null,
+						dataIdx = index;
+					
+					if (options.items[key].needInputForm === true) {
+						dataForm = 'input';
+					} else if (options.items[key].needContactForm === true) {
+						dataForm = 'contact';
+					} else if (options.items[key].needNewWindow === true) {
+						link = document.createElement('a');
+						link.href = options.items[key].url ? 'javascript:window.open("'+options.items[key].url+'", "_blank", "' + options.items[key].windowSize + '");' : '#';
+					} else {
+						link = document.createElement('a');
+						link.href = options.items[key].url ? options.items[key].url : '#';
+						link.target = '_blank';
+					}
+					
+					if (dataForm) {
+						Iff.prototype.showInputForm.call(this, component, dataIdx, itemSize, dataForm, options.items[key].formDetails, true);
+					}
+					
+					if (link) {
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+						component.find('.iw-cn-button').trigger('click');
+					}
+				} else {
+					Iff.prototype.hideInputForm.call(this, component);
+
+				}				
 			});
-		}
-		
-		function createItem(skew, aAngle, options, key, itemSize, index) {
-			var iAngle = 0, calcSkew = 0, calcAAngle = 0;
-			
-			if (itemSize <= 2) {
-				iAngle = index * 135;
-				calcSkew = -45;
-				calcAAngle = index * (90 - iAngle);
-			} else {
-				iAngle = (index === 0) ? skew - 22.5 : (index+1) * skew + (67.5 - skew);
-				calcSkew = (index === 0 || index === (itemSize - 1)) ? 90 : skew;
-				calcAAngle = (index === 0) ? aAngle + (90 - skew): aAngle;
-			}
+		} else {
+			iAngle = (index === 0) ? skew - 22.5 : (index+1) * skew + (67.5 - skew);
+			calcSkew = (index === 0 || index === (itemSize - 1)) ? 90 : skew;
+			calcAAngle = (index === 0) ? aAngle + (90 - skew): aAngle;
 			
 			var item = $(document.createElement('li'));
 			item.css({
@@ -379,7 +598,7 @@
 					href: options.items[key].url ? 'javascript:window.open("'+options.items[key].url+'", "_blank", "' + options.items[key].windowSize + '");' : '#',
 					'data-index': index
 				});
-
+	
 			} else {
 				link = $(document.createElement('a'));
 				link.attr({
@@ -396,21 +615,22 @@
 				'-o-transform': 'skew(' + (90 - calcSkew) * -1 + 'deg) rotate(' + calcAAngle + 'deg) scale(1)',
 				'transform': 'skew(' + (90 - calcSkew) * -1 + 'deg) rotate(' + calcAAngle + 'deg) scale(1)'
 			});
+			
 			link.on('click', function() {
 				$(this).blur();
 				
-				var iwFormHolder = iwComponent.find('.iw-form-holder');
+				var iwFormHolder = component.find('.iw-form-holder');
 				var formDataIdx = iwFormHolder.attr('data-index');
 				var dataIdx = $(this).attr('data-index');
 				
 				if (dataIdx === formDataIdx) {
-					hideInputForm(iwComponent);
+					Iff.prototype.hideInputForm.call(this, component);
 				} else {
-					var dataform = $(this).attr('data-form');
-					if (dataform) {
-						showInputForm(iwComponent, dataIdx, itemSize, dataform, options.items[key].formDetails);
+					var dataForm = $(this).attr('data-form');
+					if (dataForm) {
+						Iff.prototype.showInputForm.call(this, component, dataIdx, itemSize, dataForm, options.items[key].formDetails, false);
 					} else {
-						hideInputForm(iwComponent);
+						Iff.prototype.hideInputForm.call(this, component);
 					}				
 				}
 			});
@@ -426,156 +646,8 @@
 			}
 			
 			return item.append(link);
-		}		
-		
-		var iwComponent = this.$element;
-		iwComponent.addClass('iw-component');
-		
-		if (this.options.theme) {
-			iwComponent.addClass(this.options.theme);
 		}
-		
-		if (this.options.position) {
-			iwComponent.css(this.options.position);
-		}
-		
-		var iwCnOverlay = $(document.createElement('div')).addClass('iw-cn-overlay');
-		
-		var iwCnButton = $(document.createElement('button')).addClass('iw-cn-button');
-		if (this.options.helpOnGo.image) {
-			iwCnButton.append($('<img src="../images/' + this.options.helpOnGo.image + '"></img>'));
-		} else {
-			iwCnButton.append($('<span>' + this.options.helpOnGo.label + '</span>'));
-		}
-		
-		var iwCnWrapper = $(document.createElement('div')).addClass('iw-cn-wrapper');
-		iwCnWrapper.append($(document.createElement('div')).addClass('iw-cn-sm-cover'));
-		iwCnWrapper.append($(document.createElement('div')).addClass('iw-cn-bg-cover'));
-
-		var itemSize = this.options.required.indexOf('ALL') !== -1 ? Object.keys(this.options.items).length : this.options.required.length;
-
-		var skew = 135 / itemSize;
-		var aAngle = 135/(2 * itemSize) - 90;
-		var iwCnUl = $(document.createElement('ul'));
-
-		for (var j = 0; j < this.options.required.length; j ++) {
-			if (this.options.required[j] === 'ALL') {
-				var i = 0;
-				for (var key in this.options.items) {
-					iwCnUl.append(createItem(skew, aAngle, this.options, key, itemSize, i));
-					i ++;
-				}
-				break;
-
-			} else {
-				iwCnUl.append(createItem(skew, aAngle, this.options, this.options.required[j], itemSize, j));
-				
-			}
-		}
-		iwCnWrapper.append(iwCnUl);	
-		
-		var countryCode = $(document.createElement('input')).addClass('iw-form-control')
-			.attr({
-				'type': 'tel',
-				'id': 'countryCode',
-				'name': 'countryCode',
-				'tabindex' : '1'
-			}).keypress(function(evt) {
-				isMatchPattern(evt, /[\+0-9]/);
-			}).focus(function(evt) {
-				if (mobileCheck() === true) {
-					adjustComponentHeight(iwComponent, false);
-				}
-			}).blur(function(evt) {
-				if (mobileCheck() === true) {
-					adjustComponentHeight(iwComponent, true);
-				}
-			});
-		var phoneNumber = $(document.createElement('input')).addClass('iw-form-control')
-			.prop('required',true).attr({
-				'type': 'tel',
-				'id': 'phoneNumber',
-				'name': 'phoneNumber',
-				'tabindex' : '2',
-				'autocomplete': 'off'
-			}).keypress(function(evt) {
-				isMatchPattern(evt, /[0-9\r\t]/);				
-			}).keydown(function(evt) {
-				if (evt.which === 9) {
-					iwComponent.find('.iw-form').submit();
-				}
-			}).focus(function(evt) {
-				if (mobileCheck() === true) {
-					adjustComponentHeight(iwComponent, false);
-				}
-			}).blur(function(evt) {
-				if (mobileCheck() === true) {
-					adjustComponentHeight(iwComponent, true);
-				}
-			});
-		var submitBtn = $(document.createElement('button')).addClass('iw-btn')
-			.attr({
-				'id': 'submitButton',
-				'type': 'submit',
-				'tabindex' : '3'
-			})
-			.append($('<img src="../images/Aicon-send.png"></img>'));
-		var iwFormInline = $(document.createElement('div')).addClass('iw-form-inline')
-			.append(countryCode).append(phoneNumber).append(submitBtn);
-		var iwFormGreeting = $(document.createElement('div')).addClass('iw-form-greeting');
-		var iwFormInput = $(document.createElement('div')).addClass('iw-form-input')
-			.append($('<label>', {'id': 'inputLabel', 'for' : 'phoneNumber'}))
-			.append(iwFormInline)
-			.append($('<a>', {
-				text: 'www.servicefriendz.com', 
-				'class': 'iw-form-link', 
-				'href': 'http://www.servicefriendz.com'
-			}));
-		
-		var iwFormContactInline = $(document.createElement('div')).addClass('iw-list-inline-holder')
-			.append($('<ul>', {'class': 'iw-list-inline'})
-					.append($('<li>')
-						.append($('<img>', {'id': 'contactIcon'})))
-					.append($('<li>')
-						.append($('<h5>', {'id': 'contactLabel'}))
-						.append($('<h3>', {'id': 'contactNumber'}))));
-		var iwFormContactLink = $(document.createElement('div')).addClass('iw-form-contact-link-holder')
-			.append($('<a>', {'class': 'iw-form-contact-link', 'href': '#'})
-					.append($('<img>', {'src': '../images/addCont-icon.png'}))
-					.append($('<span>', {'id': 'linkDescription'})));
-		var iwFormContact = $(document.createElement('div')).addClass('iw-form-contact')
-			.append(iwFormContactInline)
-			.append(iwFormContactLink)
-			.append($('<a>', {
-				text: 'www.servicefriendz.com', 
-				'class': 'iw-form-link', 
-				'href': 'http://www.servicefriendz.com'
-			}));
-		var iwFormDetails = $(document.createElement('div')).addClass('iw-form-details')
-			.append(iwFormInput)
-			.append(iwFormContact);
-		var iwFormGroup = $(document.createElement('div')).addClass('iw-form-group')
-			.append($('<div>', {html: '\&times;', 'class': 'iw-form-close'})
-					.click(function(evt) {
-						hideInputForm(iwComponent);
-					}))
-			.append(iwFormGreeting).append(iwFormDetails);
-		var iwForm = $(document.createElement('form')).addClass('iw-form')
-			.attr({
-				'action': 'javascript:void(0);'
-			})
-			.append(iwFormGroup);
-		var iwFormHolder = $(document.createElement('div')).addClass('iw-form-holder')
-			.append(iwForm);
-
-		this.$body.append(iwCnOverlay);
-		iwComponent.append(iwCnButton).append(iwCnWrapper).append(iwFormHolder);
-		this.$intlTelInput = countryCode.intlTelInput({
-			autoHideDialCode: false,
-			nationalMode: false,
-			defaultCountry: 'auto'
-		});
-	}
+	}		
 	
 	/**
 	 * The jQuery Plugin for the IFF Widget
@@ -603,7 +675,10 @@
 					if (!open) {
 						overlay.addClass('iw-opened-nav');
 						button.addClass('iw-opened-nav');
-						wrapper.addClass('iw-opened-nav');
+						wrapper.addClass('iw-opened-nav');	
+						if (wrapper.find("ul>li").length <= 0) {
+							wrapper.addClass('iw-only-one');	
+						}
 					}
 					else {
 						button.removeClass('iw-opened-nav');
