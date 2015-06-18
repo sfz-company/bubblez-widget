@@ -49,22 +49,15 @@
 					image: null,
 					label: 'Ask me anything',
 				},
-				required: ['SMS', 'WhatsApp', 'Facebook'],
+				required: ['SMS', 'Facebook'],
 				items: { 
 					'SMS': {
+						needInputForm: true,
+						needContactForm: false,
 						formDetails: {
 							label: 'Enter your mobile number to get in touch with our team',
 							url: 'https://login.servicefriendz.com/sms/ww/',
 							confirmation: "Thanks! We will be in touch shortly."
-						}
-					},
-					
-					'WhatsApp': {
-						formDetails: {
-							name: 'WeWork',
-							number: '16466515297',
-							label: 'Get in touch with our team on WhatsApp at this number:',
-							linkDesc: 'Add WeWork to your contacts'
 						}
 					},
 					

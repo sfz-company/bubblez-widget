@@ -78,6 +78,7 @@
 
 .ww .iw-form-holder .iw-form {
 	background-color: rgba(37, 38, 40, 1);
+	padding: 4px;
 }
 
 .ww .iw-form-holder .iw-form:after {
@@ -89,12 +90,42 @@
 	background-color: rgba(226, 226, 226, 1);
 }
 
+.ww .iw-form-holder .iw-form-group label {
+ 	font-size: 12px;
+}
+
+.ww .iw-form-holder #countryCode {
+	width: 0px;
+}
+
+.ww .iw-form-holder #phoneNumber {
+	width: 150px;
+}
+
 .ww .iw-form-contact-link {
 	background-color: rgba(236, 174, 73, 1); 
 }
 
-.iw-form-contact-link:hover,
-.iw-form-link:focus,
-.iw-form-link:active {
+.ww .iw-form-contact-link:hover,
+.ww .iw-form-link:focus,
+.ww .iw-form-link:active {
 	background-color: rgba(227, 151, 23, 1); 
+}
+
+.ww .intl-tel-input .selected-flag .arrow {
+	right: 5px;
+	border-left: 4px solid transparent;
+  	border-right: 4px solid transparent;
+	border-top: 4px solid #777;
+}
+
+.ww .intl-tel-input .selected-flag {
+	  width: 50px;
+}
+
+.ww .or-label {
+	text-align: center;
+  	margin: 5px 0 5px;
+  	color: #999;
+  	font-size: 18px;
 }

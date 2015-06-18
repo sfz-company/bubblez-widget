@@ -52,14 +52,19 @@
 				required: ['SMS'],
 				items: { 
 					
+					
+					
 					'SMS': {
-						needInputForm: false,
-						needContactForm: true,
+						needInputForm: true,
+						needContactForm: false,
 						formDetails: {
 							name: 'WeWork',
 							number: '16466515297',
-							label: 'Get in touch with our team on SMS at this number:',
-							linkDesc: 'Add WeWork to your contacts'
+							description: 'SMS us at this number: #number#<div class="or-label">or</div>',
+							label: 'Enter your number and we will get back to you',
+							url: 'https://login.servicefriendz.com/sms/wwuk/',
+							confirmation: "Thanks! We will be in touch shortly.",
+							location: 'UK'
 						}
 					}
 				}

@@ -37,13 +37,13 @@
 					needNewWindow: true,
 					url: 'https://www.facebook.com/messages/whateverphones',
 					image: 'w-facebook.png',
-					description: 'facebook',
+					displayName: 'facebook',
 					windowSize: "height=500,width=750"
 				}, 
 				'WhatsApp' : {
 					needContactForm: true,
 					image: 'w-whatsapp.png',
-					description: 'WhatsApp',
+					displayName: 'WhatsApp',
 					formDetails: {
 						image: 'winIcon-whatsapp.png',
 						label: 'whatsapp us at this number',
@@ -56,10 +56,13 @@
 				'SMS' : {
 					needInputForm: true,
 					image: 'w-sms.png',
-					description: 'SMS',
+					displayName: 'SMS',
 					formDetails: {
 						image: 'w-sms.png',
+						name: null,
+						number: null,
 						location: null,
+						description: null,
 						label: 'Enter your mobile number to text with us now',
 						url: 'https://login.servicefriendz.com/sms/sfz/',
 						confirmation: 'Thank you. you will receive a message in a sec :)',
@@ -68,11 +71,11 @@
 				},
 				'LiveChat' : {
 					image: 'w-LC.png',
-					description: 'Live Chat'
+					displayName: 'Live Chat'
 				},
 				'Mail' : {
 					image: 'w-Email.png',
-					description: 'Mail'
+					displayName: 'Mail'
 				}
 			}
 		};
@@ -181,6 +184,7 @@
 			.append(countryCode).append(phoneNumber).append(submitBtn);
 		var iwFormGreeting = $(document.createElement('div')).addClass('iw-form-greeting');
 		var iwFormInput = $(document.createElement('div')).addClass('iw-form-input')
+			.append($('<div>', {'id': 'inputDescription'}))
 			.append($('<label>', {'id': 'inputLabel', 'for' : 'phoneNumber'}))
 			.append(iwFormInline);
 		
@@ -395,7 +399,34 @@
 				dialCode = '+1';
 				countryCode.intlTelInput('setNumber', '+1');
 			}
+			
+			if (formDetails.description) {
+				var description = formDetails.description;
 				
+				if (formDetails.name && formDetails.number) {
+					description = description.replace('#name#', formDetails.name);
+					description = description.replace('#number#', '<a id="inputDescriptionContactLink">' + Iff.prototype.formatPhone.call(this, formDetails.number) + '</a>');
+				}
+				
+				iwFormHolder.find('#inputDescription').html(description);
+				
+				if (Iff.prototype.isMobile.call(this) && Iff.prototype.isIPhone.call(this)) {
+					var vCard = Iff.prototype.createVCard.call(this); 
+					vCard.init();
+					vCard.name(formDetails.name, '');
+					vCard.work(formDetails.number);
+					
+					var data = vCard.get();
+					iwFormHolder.find('#inputDescriptionContactLink').attr({
+						'href': 'data:text/vcard;charset=utf-8,' + encodeURIComponent(data), 
+						'download': (formDetails.name.replace(/ /g, '_') + '.vcf')});										
+				} else {
+					iwFormHolder.find('#inputDescriptionContactLink').attr({'href': formDetails.number ? ('tel:+' + formDetails.number) : '#'});										
+				}
+			} else {
+				iwFormHolder.find('#inputDescription').empty();				
+			}
+			
 			iwFormHolder.find('.iw-form-greeting').text(formDetails.confirmation);
 			iwFormHolder.find('#inputLabel').text(formDetails.label);
 			iwFormHolder.find('#countryCode').val(dialCode);
@@ -481,7 +512,7 @@
 			left = left < 0 ? 0 : (left  + 'px');
 		} else if (isOnlyOne) {
 			bottom = 148 + 'px';
-			left = 36 + 'px';
+			left = 21 + 'px';
 		} else {
 			if (typeof index === 'string') {
 				index = parseInt(index);
@@ -635,8 +666,8 @@
 				}
 			});
 			
-			if (options.items[key].description) {
-				var span = $('<span>' + options.items[key].description + '</span>');
+			if (options.items[key].displayName) {
+				var span = $('<span>' + options.items[key].displayName + '</span>');
 				link.append(span);
 			}
 			
