@@ -593,7 +593,7 @@
 	transition: all .3s ease .3s;
 }
 
-@media ( min-width : 768px) {
+@media (min-width : 768px) {
 	.iw-form-inline .iw-form-group {
 		display: inline-block;
 		margin-bottom: 0;
@@ -607,7 +607,7 @@
 	}
 }
 
-@media ( max-width : 767px) {
+@media (max-width : 767px) {
 	.iw-component {
 		-webkit-transform: scale(0.85);
 		-moz-transform: scale(0.85);
@@ -633,7 +633,7 @@
 	}
 }
 
-@media ( max-width : 568px) {
+@media only screen and (max-width : 568px) {
 	.iw-component {
 		-webkit-transform: scale(0.75);
 		-moz-transform: scale(0.75);
@@ -645,6 +645,21 @@
 		-ms-transform-origin: 0 0;
 		-o-transform-origin: 0 0;
 		-transform-origin: 0 0;
+	}
+	.iw-form-holder.iw-opened-nav {
+		-webkit-transform: scale(1.4);
+		-moz-transform: scale(1.4);
+		-ms-transform: scale(1.4);
+		-o-transform: scale(1.4);
+		transform: scale(1.4);
+		-webkit-transform-origin: 0 0;
+		-moz-transform-origin: 0 0;
+		-ms-transform-origin: 0 0;
+		-o-transform-origin: 0 0;
+		-transform-origin: 0 0;
+	}
+	.iw-form-holder .iw-form:after {
+		content: initial;
 	}
 	.iw-form-inline .iw-form-group {
 		display: inline-block;
@@ -678,11 +693,11 @@
 		-ms-transform: scale(1.4);
 		-o-transform: scale(1.4);
 		transform: scale(1.4);
-		-webkit-transform-origin: 140px 120px;
-		-moz-transform-origin: 140px 120px;
-		-ms-transform-origin: 140px 120px;
-		-o-transform-origin: 140px 120px;
-		-transform-origin: 140px 120px;
+		-webkit-transform-origin: 0 0;
+		-moz-transform-origin: 0 0;
+		-ms-transform-origin: 0 0;
+		-o-transform-origin: 0 0;
+		-transform-origin: 0 0;
 	}
 	.iw-form-holder .iw-form:after {
 		content: initial;
@@ -719,11 +734,11 @@
 		-ms-transform: scale(1.4);
 		-o-transform: scale(1.4);
 		transform: scale(1.4);
-		-webkit-transform-origin: 140px 120px;
-		-moz-transform-origin: 140px 120px;
-		-ms-transform-origin: 140px 120px;
-		-o-transform-origin: 140px 120px;
-		-transform-origin: 140px 120px;
+		-webkit-transform-origin: 0 0;
+		-moz-transform-origin: 0 0;
+		-ms-transform-origin: 0 0;
+		-o-transform-origin: 0 0;
+		-transform-origin: 0 0;
 	}
 	.iw-form-holder .iw-form:after {
 		content: initial;

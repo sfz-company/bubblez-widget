@@ -499,20 +499,28 @@
 			}
 		}
 		
-		var bottom, left;
+		var bottom, left,
+			innerHeight = window.innerHeight,
+			innerWidth = window.innerWidth,
+			matrixRegex = /matrix\((-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+)\)/,
+			matrix = (component.css('-webkit-transform').match(matrixRegex)),
+			scale = matrix ? matrix[1] : 1
+			formScale = innerWidth > 568 ? 1 : 1.4;
+
 		if (Iff.prototype.isMobile.call(this) === true) {
-			var innerHeight = window.innerHeight;
-			var innerWidth = window.innerWidth;
-			if (innerHeight <= 380) {
-				bottom = innerHeight / 1.25 + 'px';					
-			} else {
-				bottom = innerHeight / 1.75 + 'px';
-			}
-			left = (innerWidth / 2) - 72;	
-			left = left < 0 ? 0 : (left  + 'px');
+			var formWidth = iwFormHolder.innerWidth(),
+			 	formHeight = iwFormHolder.innerHeight();
+
+			bottom = ((innerHeight / 2) - (formHeight / 2)) * formScale / scale;
+			bottom = (bottom * scale < 210 ? 210 / scale: bottom);
+			bottom = ((bottom + formHeight * formScale) * scale > innerHeight ? (innerHeight - 10 - (formHeight * formScale * scale)) / scale : bottom) + 'px';
+			left = ((innerWidth / 2) - (formWidth * formScale * scale / 2)) / scale;
+			left = (left < 0 ? 0 : left) + 'px';
+						
 		} else if (isOnlyOne) {
-			bottom = 148 + 'px';
-			left = 21 + 'px';
+			bottom = 150 * formScale + 'px';
+			left = 20 * formScale + 'px';
+
 		} else {
 			if (typeof index === 'string') {
 				index = parseInt(index);
@@ -524,7 +532,7 @@
 			
 			var baseDegrees = (0.65 * Math.PI / size) * index;				
 			bottom = Math.cos(baseDegrees)*225.0778 + 56 +'px';
-			left = Math.sin(baseDegrees)*225.0778 + 56 +'px';
+			left = Math.sin(baseDegrees)*225.0778 + 20 * (1 + index * 0.5) +'px';
 		}
 		
 		iwFormHolder.css({
