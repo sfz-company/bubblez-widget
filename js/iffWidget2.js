@@ -396,8 +396,8 @@
 			if (countryCode.intlTelInput('getSelectedCountryData').dialCode !== undefined) {
 				dialCode = '+' + countryCode.intlTelInput('getSelectedCountryData').dialCode;
 			} else {
-				dialCode = '+1';
-				countryCode.intlTelInput('setNumber', '+1');
+				dialCode = '+44';
+				countryCode.intlTelInput('setNumber', '+44');
 			}
 			
 			if (formDetails.description) {
