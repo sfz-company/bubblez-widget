@@ -658,12 +658,10 @@
 			
 			link.on('click', function() {
 				$(this).blur();
-				console.log('Clicking');
+
 				var iwFormHolder = component.find('.iw-form-holder');
 				var formDataIdx = iwFormHolder.attr('data-index');
 				var dataIdx = $(this).attr('data-index');
-				
-				console.log('Click', iwFormHolder, formDataIdx, dataIdx);
 				
 				if (dataIdx === formDataIdx) {
 					Iff.prototype.hideInputForm.call(this, component);
