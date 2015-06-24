@@ -503,7 +503,7 @@
 			innerHeight = window.innerHeight,
 			innerWidth = window.innerWidth,
 			matrixRegex = /matrix\((-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+),\s*(-?\d*\.?\d+)\)/,
-			matrix = (component.css('-webkit-transform').match(matrixRegex)),
+			matrix = (component.css('-webkit-transform')||component.css('-moz-transform')||component.css('-ms-transform')||component.css('-o-transform')||component.css('transform')).match(matrixRegex),
 			scale = matrix ? matrix[1] : 1
 			formScale = innerWidth > 568 ? 1 : 1.4;
 
@@ -634,7 +634,8 @@
 			} else if (options.items[key].needNewWindow === true) {
 				link = $(document.createElement('a'));
 				link.attr({
-					href: options.items[key].url ? 'javascript:window.open("'+options.items[key].url+'", "_blank", "' + options.items[key].windowSize + '");' : '#',
+					href: '#',
+					onclick: options.items[key].url ? 'javascript:window.open("'+options.items[key].url+'", "_blank", "' + options.items[key].windowSize + '");' : 'return;',
 					'data-index': index
 				});
 	
@@ -657,10 +658,12 @@
 			
 			link.on('click', function() {
 				$(this).blur();
-				
+				console.log('Clicking');
 				var iwFormHolder = component.find('.iw-form-holder');
 				var formDataIdx = iwFormHolder.attr('data-index');
 				var dataIdx = $(this).attr('data-index');
+				
+				console.log('Click', iwFormHolder, formDataIdx, dataIdx);
 				
 				if (dataIdx === formDataIdx) {
 					Iff.prototype.hideInputForm.call(this, component);

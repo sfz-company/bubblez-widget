@@ -256,6 +256,11 @@
 	background: radial-gradient(transparent 20%, rgba(255, 255, 255, .5) 20%, rgba(255, 255, 255, .5) 62%, transparent 62%);
 }
 
+.iw-cn-wrapper li:not(.active) div:focus, 
+.iw-cn-wrapper li:not(.active) a:focus {
+	position: absolute;
+}
+
 .iw-cn-wrapper li div img,
 .iw-cn-wrapper li a img {
 	margin-top: 10px;
